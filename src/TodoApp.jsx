@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Header } from './components/Header'
+import { TodoAdd } from './components/TodoAdd';
+import { TodoFilter } from './components/TodoFilter';
+import { TodoListItem } from './components/TodoListItem';
 // import { TodoAdd } from './components/TodoAdd'
 
-const init = () => {
-
-    return JSON.parse(localStorage.getItem('todos')) || [];
-}
 
 export const TodoApp = () => {
 
 const [description, setDescription] = useState('')
 const [todos, setTodos] = useState([])
 const [activeTodos, setActiveTodos] = useState([])
-
-
 
 
 useEffect(() => {
@@ -26,6 +23,7 @@ useEffect(() => {
   useEffect(() => {
     localStorage.setItem('todos',JSON.stringify( todos ))
 }, [todos]);
+
 
 const handleInputChange = (e) => {
     setDescription(e.target.value)
@@ -64,16 +62,17 @@ const checkTodo = (id, completed) => {
 }
 
 const todosLeft = todos.filter(todo => todo.completed === false) 
-const allTodos = () => {
+const filterAllTodos = () => {
     return setTodos([...todos])
 }
-console.log(todos);
+
 const filterActiveTodos = () => {
     const filter = todos.filter(todo => todo.completed === false)
     setActiveTodos([...filter])
+    console.log(filter);
 }
 
-const completedTodos = () => {
+const filterCompletedTodos = () => {
     const completed = todos.filter(todo => todo.completed === true)
     console.log(completed);
 }
@@ -88,95 +87,41 @@ const clearCompleted = () => {
         <>
             <Header/>
 
-
-
-            
             <div className='container flex flex-col items-center justify-center mx-auto -translate-y-40'>
 
-            
-            <form onSubmit={handleSubmit} className=''>
-            <input
-                className='border-2 border-solid  rounded-[5px]  h-16 w-[500px] '
-                type='text'
-                placeholder='Create a new todo...'
-                value={description}
-                onChange={handleInputChange}
+            <TodoAdd
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                description={description}
             />
-            </form>
             
-           
-            
-
             <div className='mt-5 '>
                 {
                     (todos)  &&
                     todos.map( todo => (
 
-                        <div key={todo.id} className='flex flex-row  justify-start border-[1px] border-solid  bg-white first:rounded-tr-[5px] first:rounded-tl-[5px]  h-16 w-[500px] items-center'>
-
-                            {/* <div className='flex mt-5 ml-5'> */}
-
-                                <div
-                                    onClick={()=> checkTodo(todo.id, todo.completed)}
-                                    className={`h-7 w-7 border-[1px] cursor-pointer  rounded-xl items-center mr-5 ml-5 ${todo.completed ? 'bg-gradient-to-r from-[#57ddff] to-[#c058f3] text-' : ''} `}
-                                >
-                                    <div className='mt-2 ml-2'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="9"><path fill="none" stroke="#FFF" strokeWidth="2" d="M1 4.304L3.696 7l6-6"/></svg>
-                                    </div>
-                                    
-
-                                </div>    
-                            
-                            {/* </div> */}
-
-                            <div className='flex justify-start '>
-                                <section className={`text-xl ${todo.completed ? 'line-through' : ''} `}>
-                                {todo.desc}
-
-                                </section>
-                            </div>
-
-
-
-                            
-                            <div className='flex ml-auto mr-5'>
-                                <button onClick={()=>deleteTodo(todo.id)} className='flex '>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
-                                        <path fill="#494C6B" fillRule="evenodd" d="M16.97 0l.708.707L9.546 8.84l8.132 8.132-.707.707-8.132-8.132-8.132 8.132L0 16.97l8.132-8.132L0 .707.707 0 8.84 8.132 16.971 0z"/>
-                                    </svg>
-                                </button>
-                            </div>
-                            </div>
-
-                    ) ) 
-                }
+                        <TodoListItem
+                            key={todo.id}
+                            {...todo}
+                            checkTodo={checkTodo}
+                            deleteTodo={deleteTodo}
+                        />
                 
-
-                
+                    ))
+                    }
 
             </div>
             
                 {todos != '' &&
-                    <div className='flex flex-row justify-start items-center border-[1px] border-solid rounded-bl-[5px] rounded-br-[5px] bg-white  h-16 w-[500px] '>
-                        <div className='ml-5 mr-14'>
-                            <h1 className='text-sm'>{todosLeft.length} items left</h1>
-                        </div>
-
-                        <div className='text-base '>
-                            <span onClick={allTodos} className='cursor-pointer'>All</span>
-                            <span onClick={filterActiveTodos} className='mx-5 cursor-pointer'>Active</span>
-                            <span onClick={completedTodos} className='cursor-pointer'>Completed</span>
-                        </div>
-
-                        <div className='ml-auto mr-5'>
-                            <h1 onClick={clearCompleted} className='text-sm cursor-pointer '>Clear completed</h1>
-                        </div>
-                        
-                    </div>
+                    <TodoFilter
+                        todosLeft={todosLeft}
+                        filterAllTodos={filterAllTodos}
+                        filterActiveTodos={filterActiveTodos}
+                        filterCompletedTodos={filterCompletedTodos}
+                        clearCompleted={clearCompleted}
+                    />
                     }
 
-
-            
             </div>
         </>
     )

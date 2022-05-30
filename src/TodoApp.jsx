@@ -11,7 +11,7 @@ export const TodoApp = () => {
 
 const [description, setDescription] = useState('')
 const [todos, setTodos] = useState([])
-const [tag, setTag] = useState('')
+const [filter, setFilter] = useState('')
 const [toggleDark, setToggleDark] = useState(false)
 const [check, setCheck] = useState(false)
 
@@ -19,7 +19,6 @@ const [check, setCheck] = useState(false)
 useEffect(() => {
     const darkMode = JSON.parse(localStorage.getItem('dark'));
     if (darkMode) {
-        console.log(darkMode);
         setToggleDark(darkMode);
     }
 }, []);
@@ -96,11 +95,14 @@ const clearCompleted = () => {
 
 const todosLeft = todos.filter(todo => todo.completed === false)
 
-const todosFiltered = handleFilter(tag, todos)
+const todosFiltered = handleFilter(filter, todos)
 
 
     return (
         <>
+        <div className='flex flex-col min-h-screen'>
+
+        
             <Header toggleDark={toggleDark}/>
 
             <div className='container flex flex-col items-center justify-center mx-auto -translate-y-60 md:-translate-y-40 animate__animated animate__fadeIn animate__slow'>
@@ -140,8 +142,8 @@ const todosFiltered = handleFilter(tag, todos)
                         (todos != '') &&
                         <>
                         <TodoFilter
-                            setTag={setTag}
-                            tag={tag}
+                            setFilter={setFilter}
+                            filter={filter}
                             toggleDark={toggleDark}
                         />
 
@@ -151,7 +153,18 @@ const todosFiltered = handleFilter(tag, todos)
                         </>
                     }
                     
+
+                    
             </div>
+
+            </div>
+
+        <div className='flex justify-center mt-auto'>
+            <div className={`${toggleDark ? 'text-[#cacde8] ' : 'text-[#484b6a]'} text-sm sm:text-base`}>
+                Challenge by <a className='text-blue-600' href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
+                Coded by <a className='text-blue-600' href="https://github.com/leoron95" target="_blank">leoron95</a>.
+            </div>
+        </div>
 
         </>
                 )
